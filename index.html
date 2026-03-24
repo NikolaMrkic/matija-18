@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Pozivnica za 18. rođendan Matije Fatića" />
+  <title>Matija Fatić | 18. rođendan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <canvas id="particles"></canvas>
+
+  <div class="card">
+    <div class="header-label">Pozivnica za 18. rođendan</div>
+
+    <div class="photo-wrap">
+      <img src="assets/matija.png" alt="Matija Fatić" />
+    </div>
+
+    <div class="name-section">
+      <div class="name">Matija Fatić</div>
+      <div class="birthday-title">18. Rođendan</div>
+    </div>
+
+    <div class="datetime">30. Maj 2026. &nbsp;|&nbsp; Od 19h</div>
+
+    <div class="divider"></div>
+
+    <a class="venue" href="https://maps.app.goo.gl/wFxyKd2YXSEanUGb9" target="_blank" rel="noopener">
+      <div class="venue-name">Restoran Zlatni Hrast</div>
+      <div class="venue-city">Beograd</div>
+    </a>
+
+    <div class="divider"></div>
+
+    <div class="countdown">
+      <div class="timer" id="timer">
+        <div class="time-box"><strong id="days">00</strong><span>Dana</span></div>
+        <div class="time-box"><strong id="hours">00</strong><span>Sati</span></div>
+        <div class="time-box"><strong id="minutes">00</strong><span>Minuta</span></div>
+        <div class="time-box"><strong id="seconds">00</strong><span>Sekundi</span></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ── Countdown ── */
+    const targetDate = new Date("2026-05-30T19:00:00+02:00").getTime();
+
+    function pad(v) { return String(v).padStart(2, "0"); }
+
+    function updateCountdown() {
+      const distance = targetDate - Date.now();
+      if (distance <= 0) {
+        ["days","hours","minutes","seconds"].forEach(id => document.getElementById(id).textContent = "00");
+        return;
+      }
+      document.getElementById("days").textContent    = pad(Math.floor(distance / 86400000));
+      document.getElementById("hours").textContent   = pad(Math.floor(distance / 3600000) % 24);
+      document.getElementById("minutes").textContent = pad(Math.floor(distance / 60000) % 60);
+      document.getElementById("seconds").textContent = pad(Math.floor(distance / 1000) % 60);
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    /* ── Particles ── */
+    (function () {
+      const canvas = document.getElementById("particles");
+      const ctx = canvas.getContext("2d");
+      const GOLD = ["rgba(242,195,93,", "rgba(255,207,105,", "rgba(255,230,150,"];
+      let W, H, particles;
+
+      function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }
+
+      function mkParticle() {
+        return {
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: Math.random() * 1.8 + 0.4,
+          speed: Math.random() * 0.25 + 0.05,
+          drift: (Math.random() - 0.5) * 0.15,
+          opacity: Math.random() * 0.6 + 0.1,
+          fade: (Math.random() * 0.003 + 0.001) * (Math.random() < 0.5 ? 1 : -1),
+          color: GOLD[Math.floor(Math.random() * GOLD.length)]
+        };
+      }
+
+      function init() {
+        resize();
+        particles = Array.from({ length: 70 }, mkParticle);
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        particles.forEach(p => {
+          p.opacity += p.fade;
+          if (p.opacity <= 0 || p.opacity >= 0.75) p.fade *= -1;
+          p.y -= p.speed;
+          p.x += p.drift;
+          if (p.y < -4) { p.y = H + 4; p.x = Math.random() * W; }
+          if (p.x < -4 || p.x > W + 4) { p.x = Math.random() * W; p.y = Math.random() * H; }
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = p.color + p.opacity.toFixed(2) + ")";
+          ctx.fill();
+        });
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener("resize", () => { resize(); });
+      init();
+      draw();
+    })();
+  </script>
+</body>
+</html>
