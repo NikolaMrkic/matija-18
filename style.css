@@ -21,7 +21,7 @@ canvas#particles {
 .card {
   position: relative;
   z-index: 1;
-  width: min(440px, 90%);
+  width: min(440px, 93%);
   background: #0d0d0d;
   border-radius: 20px;
   border: 1px solid rgba(242, 195, 93, 0.3);
